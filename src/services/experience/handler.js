@@ -7,9 +7,9 @@ import { pdfStream } from './PDFStream.js';
 import experienceModel from './sechema.js';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
-
+import fs from 'fs-extra';
 const jsoncsv = json2csv;
-
+const { createReadStream } = fs;
 const cloudinaryStorage = new CloudinaryStorage({
 	cloudinary,
 	params: {
@@ -117,9 +117,9 @@ const downloadCSV = async (req, res, next) => {
 	try {
 		const id = req.params.experienceId;
 		const destination = res;
-		const getStream = () => createReadStream(dataFolder);
-		const source = await experienceModel.findById(id);
-		console.log(source);
+		const data = await experienceModel.findById(id);
+		const json = JSON.stringify(data);
+		console.log(json);
 		const transform = new json2csv.Transform({
 			fields: [
 				'role',
@@ -130,7 +130,7 @@ const downloadCSV = async (req, res, next) => {
 				'area',
 			],
 		});
-		pipeline(source, transform, destination, (err) => {
+		pipeline(json, transform, destination, (err) => {
 			if (err) next(err);
 		});
 	} catch (error) {
