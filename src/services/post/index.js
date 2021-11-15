@@ -22,7 +22,7 @@ postRouter.get("/", async(req,res,next)=> {
          const postToShow = await PostModel.find(mongoQuery.criteria)
          .limit(mongoQuery.options.limit)
          .skip(mongoQuery.options.skip)
-         .populate({path: "Profile", select: "name surname"})
+         .populate({path: "user", select: "name surname"})
 
          res.send(postToShow)
     }catch (error) {
@@ -79,6 +79,47 @@ postRouter.put("/:postId", async (req, res, next) => {
     } catch (error) {
       next(error)
     }
+  })
+
+  postRouter.post("/:postId/likes", async(req, res, next)=> {
+      try {
+          const postToLike = await PostModel.findById(req.params.postId)
+          if (postToLike) {
+          const newLike = new PostModel(req.body)
+          const updatedPost = await PostModel.findByIdAndUpdate(
+              req.params.postId,
+              {$push: {likes: newLike}},
+              {new: true}
+          )
+          res.send(updatedPost)
+          }else {
+            res
+                .status(404)
+                .send({ message: `Post with ${id} is not found!` })
+          }
+        } catch (error) {
+          next(error)
+        }
+      
+  })
+
+  postRouter.get("/:postId/likes", async(req, res, next)=> {
+    try {
+        
+
+        const post = await PostModel.findById(req.params.postId)
+        if (post) {
+            console.log(post.likes.length)
+            res.send(post.likes)
+        }else{
+            res
+            .status(404)
+            .send({ message: `post with ${id} is not found!` })
+        }
+    }catch (error) {
+        next(error)
+    }
+      
   })
 
 export default postRouter
