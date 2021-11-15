@@ -2,7 +2,7 @@ import multer from 'multer';
 import json2csv from 'json2csv';
 import q2m from 'query-to-mongo';
 import { pipeline } from 'stream';
-import experienceModel from './sechema.js';
+import experienceModel from './schema.js';
 import createHttpError from 'http-errors';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
