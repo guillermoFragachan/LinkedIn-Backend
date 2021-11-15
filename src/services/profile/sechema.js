@@ -7,7 +7,7 @@
         "title": "COO @ Strive School",
         "area": "Berlin",
         "image": ..., //server generated on upload, set a default here
-        "username": "admin",
+        "username": "admin"
 
 
 

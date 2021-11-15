@@ -14,10 +14,34 @@ export const getPDFReadableStream = data => {
     },
   }
 
+
+  /* 
+   
+      name: profile.name,
+        surname: profile.surname,
+		email: profile.email,
+        bio: profile.bio,
+        title: profile.title,
+        area: profile.area,
+        image: profile.image,
+        username: profile.username
+
+
+  
+
+*/
+
   const printer = new PdfPrinter(fonts)
 
   const docDefinition = {
-    content: [data.name, data.description, data.price, data.category],
+    content: [data.name, 
+              data.surname,
+               data.email, 
+               data.bio,
+               data.title,
+               data.area,,
+               data.image,
+               data.username],
     defaultStyle: {
       font: "Helvetica",
     },

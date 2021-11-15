@@ -2,7 +2,26 @@ import express from "express";
 import ProfileModel from "./sechema.js";
 import {getPDFReadableStream} from "./lib.js"
 import { pipeline } from "stream"
+import { CloudinaryStorage } from "multer-storage-cloudinary"
+import multer from "multer"
+import { v2 as cloudinary } from "cloudinary"
 
+
+//*************************************    CLAUDINARY     *************************** 
+const { CLOUDINARY_NAME, CLOUDINARY_KEY, CLOUDINARY_SECRET } = process.env;
+
+cloudinary.config({
+  cloud_name: CLOUDINARY_NAME,
+  api_key: CLOUDINARY_KEY,
+  api_secret: CLOUDINARY_SECRET,
+});
+
+
+const cloudinaryStorage = new CloudinaryStorage({
+	cloudinary:cloudinary
+})
+
+//*************************************    CRUD PROFILES     *************************** 
 
 const router = express.Router();
 
@@ -47,29 +66,41 @@ router.put('/:id', async (req, res, next) => {
 
 
 
-// *************** FILE ENDPOINTS ***********************
+//*************************************    CRUD FILES     *************************** 
 
-router.put("./:id/picture", async (req, res, next) => {
+
+router.put('/:id/picture', multer({storage:cloudinaryStorage}).single('img'), async(req, res, next)=>{
     try{
-        const profile = await ProfileModel.findByIdAndUpdate(req.params.id, {image: req.body.image}, {new: true})
-        res.send(profile)
+    const profile = await ProfileModel.findById(req.params.id)
+    profile.image = req.file.path
+    await profile.save()
+    res.status(201).send(profile)
     }catch (error){
         next(error)
     }
-})
+
+  
+  })
+
 
 router.get("/:id/CV",async (req, res, next) => {
     try{
     res.setHeader("Content-Disposition", "attachment; filename=CV.pdf")
 
 	const profile = await ProfileModel.findById(req.params.id)
-	// const profileIndex = profiles.findIndex(profile => profile._id === req.params.id)
-	
-	// const profile = profiles[profileIndex]
+
 
 	const source = getPDFReadableStream({ 
 		name: profile.name,
-		email: profile.email})
+        surname: profile.surname,
+		email: profile.email,
+        bio: profile.bio,
+        title: profile.title,
+        area: profile.area,
+        image: profile.image,
+        username: profile.username
+
+    })
 		 // PDF READABLE STREAM
     const destination = res
 
@@ -83,7 +114,8 @@ router.get("/:id/CV",async (req, res, next) => {
 })
 
 
-//extra
+////*************************************    CRUD PROFILES     *************************** 
+
 router.delete('/:id', async (req, res, next) => {
     try{
         await ProfileModel.findByIdAndDelete(req.params.id)
