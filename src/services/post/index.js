@@ -1,5 +1,6 @@
 import express from "express"
 import q2m from "query-to-mongo"
+import PostModel from "./sechema.js"
 
 const postRouter = express.Router()
 
@@ -21,6 +22,7 @@ postRouter.get("/", async(req,res,next)=> {
          const postToShow = await PostModel.find(mongoQuery.criteria)
          .limit(mongoQuery.options.limit)
          .skip(mongoQuery.options.skip)
+         .populate({path: "Profile", select: "name surname"})
 
          res.send(postToShow)
     }catch (error) {
@@ -66,7 +68,7 @@ postRouter.put("/:postId", async (req, res, next) => {
     try {
       const id = req.params.postId
   
-      const deletedpPost = await PostModel.findByIdAndDelete(id)
+      const deletedPost = await PostModel.findByIdAndDelete(id)
       if (deletedPost) {
         res.status(204).send()
       } else {
