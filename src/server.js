@@ -1,8 +1,9 @@
-import express from 'express';
 import cors from 'cors';
-import listEndpoints from 'express-list-endpoints';
+import express from 'express';
 import mongoose from 'mongoose';
-//import experienceRouter from './services/experience/index.js'
+import listEndpoints from 'express-list-endpoints';
+import experienceRouter from './services/experience/index.js';
+
 const server = express();
 
 const port = process.env.PORT || 3001;
@@ -13,7 +14,7 @@ server.use(cors());
 server.use(express.json());
 
 // ********************************* ROUTES ********************************************
-//server.use('/experience', experienceRouter);
+server.use('/experience', experienceRouter);
 
 // ********************************* ERROR HANDLERS ************************************
 
