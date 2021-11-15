@@ -1,6 +1,10 @@
 import express from "express"
 import q2m from "query-to-mongo"
 import PostModel from "./sechema.js"
+import commentsHandlers from "../comments/index.js"
+import CommentModel from "../comments/schema.js"
+
+
 
 const postRouter = express.Router()
 
@@ -17,12 +21,15 @@ postRouter.post( "/", async(req,res, next)=> {
 postRouter.get("/", async(req,res,next)=> {
     try {
          const mongoQuery = q2m(req.query)
-
          const total = await PostModel.countDocuments(mongoQuery.criteria)
+
          const postToShow = await PostModel.find(mongoQuery.criteria)
          .limit(mongoQuery.options.limit)
          .skip(mongoQuery.options.skip)
-         .populate({path: "Profile", select: "name surname"})
+         .populate({path: "user"})
+
+         console.log(mongoQuery)
+
 
          res.send(postToShow)
     }catch (error) {
@@ -80,6 +87,29 @@ postRouter.put("/:postId", async (req, res, next) => {
       next(error)
     }
   })
+
+
+//*******COMMENT ENDPOINTS */
+
+  const {   makeComment,
+    getComments,
+    getSingleComment,
+    deleteComment,
+    updateComment} = commentsHandlers
+
+postRouter.route("/:postId/comments")
+.get(getComments)
+      .post(makeComment)
+      // .get(getComments)
+
+postRouter.route("/:postId/comments/:commentId")
+      .get(getSingleComment)
+      .put(updateComment)
+      .delete(deleteComment)
+
+
+
+
 
 export default postRouter
   
