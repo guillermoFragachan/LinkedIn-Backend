@@ -43,23 +43,25 @@ const creatExperience = async (req, res, next) => {
 	}
 };
 
-const imgExperience = async (req, res, next) => {
-	try {
-		const allExperience = await experienceModel;
-		const index = allExperience.findIndex(
-			(p) => p.id === req.params.experienceId,
-		);
-		const addImage = {
-			...allExperience[index],
-			image: req.file.path,
-		};
-		allExperience[index] = addImage;
+const imgExperience =
+	(parcing,
+	async (req, res, next) => {
+		try {
+			const allExperience = await experienceModel;
+			const index = allExperience.findIndex(
+				(p) => p.id === req.params.experienceId,
+			);
+			const addImage = {
+				...allExperience[index],
+				image: req.file.path,
+			};
+			allExperience[index] = addImage;
 
-		res.send('ok');
-	} catch (error) {
-		next(error);
-	}
-};
+			res.send('ok');
+		} catch (error) {
+			next(error);
+		}
+	});
 
 const getExperienceById = async (req, res, next) => {
 	try {
@@ -78,7 +80,7 @@ const updateExperience = async (req, res, next) => {
 		const id = req.params.experienceId;
 		const updatexperience = await experienceModel.findByIdAndUpdate(
 			id,
-			{image: req.file.path},
+			{ image: req.file.path },
 			{ new: true },
 		);
 		if (updatexperience) {
@@ -105,13 +107,35 @@ const deleteExperience = async (req, res, next) => {
 	}
 };
 
+const downloadCSV =
+	('/downloadCSV',
+	(req, res, next) => {
+		try {
+		} catch (error) {
+			console.error('req send');
+			next(error);
+		}
+	});
+
+const downloadPDF =
+	('/downloadPDF',
+	(req, res, next) => {
+		try {
+		} catch (error) {
+			console.error('req send');
+			next(error);
+		}
+	});
+
 const experienceendpoint = {
-	getAllExperience,
+	downloadPDF,
+	downloadCSV,
+	imgExperience,
 	creatExperience,
-	getExperienceById,
 	updateExperience,
 	deleteExperience,
-	imgExperience,
+	getAllExperience,
+	getExperienceById,
 };
 
 export default experienceendpoint;
