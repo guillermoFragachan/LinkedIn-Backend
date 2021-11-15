@@ -36,9 +36,11 @@ postRouter.post( "/", async(req,res, next)=> {
 })
 
 postRouter.get("/", async(req,res,next)=> {
+
   try {
     const mongoQuery = q2m(req.query)
     const total = await PostModel.countDocuments(mongoQuery.criteria)
+
 
     const postToShow = await PostModel.find(mongoQuery.criteria)
     .limit(mongoQuery.options.limit)
@@ -118,6 +120,48 @@ postRouter.get("/:postId", async(req, res, next)=> {
   })
 
 
+  postRouter.post("/:postId/likes", async(req, res, next)=> {
+      try {
+          const postToLike = await PostModel.findById(req.params.postId)
+          if (postToLike) {
+          const newLike = new PostModel(req.body)
+          const updatedPost = await PostModel.findByIdAndUpdate(
+              req.params.postId,
+              {$push: {likes: newLike}},
+              {new: true}
+          )
+          res.send(updatedPost)
+          }else {
+            res
+                .status(404)
+                .send({ message: `Post with ${id} is not found!` })
+          }
+        } catch (error) {
+          next(error)
+        }
+      
+  })
+
+  postRouter.get("/:postId/likes", async(req, res, next)=> {
+    try {
+        
+
+        const post = await PostModel.findById(req.params.postId)
+        if (post) {
+            console.log(post.likes.length)
+            res.send(post.likes)
+        }else{
+            res
+            .status(404)
+            .send({ message: `post with ${id} is not found!` })
+        }
+    }catch (error) {
+        next(error)
+    }
+      
+  })
+
+
 //*******COMMENT ENDPOINTS */
 
   const {   makeComment,
@@ -135,6 +179,7 @@ postRouter.route("/:postId/comments/:commentId")
       .get(getSingleComment)
       .put(updateComment)
       .delete(deleteComment)
+
 
 
 

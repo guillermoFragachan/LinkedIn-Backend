@@ -2,17 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import mongoose from "mongoose"
-import profileRouter from './services/profile/index.js'
+import profileRouter from "./services/profile/index.js"
 import postRouter from './services/post/index.js';
 import experienceRouter from './services/experience/index.js';
-
-
-
 
 const server = express();
 
 
 const port = process.env.PORT || 3006
+
 
 // ********************************* MIDDLEWARES ***************************************
 
