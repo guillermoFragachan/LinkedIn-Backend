@@ -11,7 +11,7 @@ const experienceSchema = new Schema(
 		endDate: { type: Date },
 		area: { type: String, required: true },
 		username: { type: String, required: true },
-		image: { type: String, required: true },
+		image: { type: String },
 	},
 	{
 		timestamps: true,

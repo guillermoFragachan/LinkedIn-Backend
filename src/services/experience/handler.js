@@ -1,6 +1,17 @@
+import multer from 'multer';
+import q2m from 'query-to-mongo';
 import createHttpError from 'http-errors';
 import experienceModel from './sechema.js';
-import q2m from 'query-to-mongo';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+
+const cloudinaryStorage = new CloudinaryStorage({
+	cloudinary,
+	params: {
+		folder: 'Experience',
+	},
+});
+const parcing = multer({ storage: cloudinaryStorage }).single('profilePic');
 
 const getAllExperience = async (req, res, next) => {
 	try {
@@ -12,10 +23,7 @@ const getAllExperience = async (req, res, next) => {
 			.skip(querys.options.skip)
 			.sort(querys.options.sort);
 		res.send({
-			link: querys.links(
-				'',
-				total,
-			),
+			link: querys.links('', total),
 			pageTotal: Math.ceil(total / querys.options.limit),
 			total,
 			allExperience,
@@ -35,9 +43,27 @@ const creatExperience = async (req, res, next) => {
 	}
 };
 
+const imgExperience = async (req, res, next) => {
+	try {
+		const allExperience = await experienceModel;
+		const index = allExperience.findIndex(
+			(p) => p.id === req.params.experienceId,
+		);
+		const addImage = {
+			...allExperience[index],
+			image: req.file.path,
+		};
+		allExperience[index] = addImage;
+
+		res.send('ok');
+	} catch (error) {
+		next(error);
+	}
+};
+
 const getExperienceById = async (req, res, next) => {
 	try {
-		const id = req.params.id;
+		const id = req.params.experienceId;
 		const experience = await experienceModel.findById(id);
 		if (experience) {
 			res.send(experience);
@@ -49,10 +75,10 @@ const getExperienceById = async (req, res, next) => {
 
 const updateExperience = async (req, res, next) => {
 	try {
-		const id = req.params.id;
+		const id = req.params.experienceId;
 		const updatexperience = await experienceModel.findByIdAndUpdate(
 			id,
-			req.body,
+			{image: req.file.path},
 			{ new: true },
 		);
 		if (updatexperience) {
@@ -67,7 +93,7 @@ const updateExperience = async (req, res, next) => {
 
 const deleteExperience = async (req, res, next) => {
 	try {
-		const id = req.params.id;
+		const id = req.params.experienceId;
 		const deletexperience = await experienceModel.findByIdAndDelete(id);
 		if (deletexperience) {
 			res.status(200).send();
@@ -85,6 +111,7 @@ const experienceendpoint = {
 	getExperienceById,
 	updateExperience,
 	deleteExperience,
+	imgExperience,
 };
 
 export default experienceendpoint;
