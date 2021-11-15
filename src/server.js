@@ -3,6 +3,7 @@ import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import mongoose from "mongoose"
 import profileRouter from './services/profile/index.js'
+import postRouter from './services/post/index.js';
 
 
 
@@ -20,6 +21,7 @@ server.use(express.json())
 // ********************************* ROUTES ********************************************
 
 server.use('/profile', profileRouter)
+server.use("/posts", postRouter)
 
 // ********************************* ERROR HANDLERS ************************************
 
