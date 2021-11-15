@@ -58,6 +58,7 @@ const imgExperience =
 			const experience = await experienceModel.findById(
 				req.params.experienceId,
 			);
+			console.log(req);
 			experience.image = req.file.path;
 			await image.save();
 			res.status(201).send(image);
