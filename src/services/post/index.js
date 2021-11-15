@@ -3,10 +3,41 @@ import q2m from "query-to-mongo"
 import PostModel from "./sechema.js"
 import commentsHandlers from "../comments/index.js"
 import CommentModel from "../comments/schema.js"
+import { CloudinaryStorage } from "multer-storage-cloudinary"
+import multer from "multer"
+import { v2 as cloudinary } from "cloudinary"
+
+//*************************************    CLAUDINARY     *************************** 
+const { CLOUDINARY_NAME, CLOUDINARY_KEY, CLOUDINARY_SECRET } = process.env;
+
+cloudinary.config({
+  cloud_name: CLOUDINARY_NAME,
+  api_key: CLOUDINARY_KEY,
+  api_secret: CLOUDINARY_SECRET,
+});
 
 
+const cloudinaryStorage = new CloudinaryStorage({
+	cloudinary:cloudinary
+})
+//********************************************* */
 
 const postRouter = express.Router()
+
+postRouter.put('/:id/picture', multer({storage:cloudinaryStorage}).single("img"), async (req, res, next) => {
+  try {
+    const postxy = await PostModel.findById(req.params.id)
+    if(postxy){
+      console.log("ok")
+    } else { console.log("not ok")}
+    // console.log(post.image)
+    // post.image = req.file.path
+    // await post.save()
+    // res.status(201).send(post)
+  } catch (error) {
+    next(error)
+  }
+})
 
 postRouter.post( "/", async(req,res, next)=> {
     try{
