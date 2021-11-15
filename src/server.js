@@ -8,18 +8,8 @@ const server = express();
 
 const port = process.env.PORT || 3001;
 
-import mongoose from "mongoose"
-import profileRouter from './services/profile/index.js'
+import profileRouter from './services/profile/index.js';
 import postRouter from './services/post/index.js';
-
-
-
-
-const server = express();
-
-
-const port = process.env.PORT || 3001
-
 
 // ********************************* MIDDLEWARES ***************************************
 
@@ -29,10 +19,9 @@ server.use(express.json());
 // ********************************* ROUTES ********************************************
 
 server.use('/profile/username/experience', experienceRouter);
-=======
 
-server.use('/profile', profileRouter)
-server.use("/posts", postRouter)
+server.use('/profile', profileRouter);
+server.use('/posts', postRouter);
 
 // ********************************* ERROR HANDLERS ************************************
 
