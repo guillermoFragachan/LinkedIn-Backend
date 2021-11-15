@@ -1,10 +1,11 @@
 import express from "express";
 import ProfileModel from "./sechema.js";
-import {getPDFReadableStream} from "./lib.js"
+// import {getPDFReadableStream} from "./lib.js"
 import { pipeline } from "stream"
 import { CloudinaryStorage } from "multer-storage-cloudinary"
 import multer from "multer"
 import { v2 as cloudinary } from "cloudinary"
+import { getPDFReadableStream } from "./pdf.js";
 
 
 //*************************************    CLAUDINARY     *************************** 
@@ -83,34 +84,50 @@ router.put('/:id/picture', multer({storage:cloudinaryStorage}).single('img'), as
   })
 
 
-router.get("/:id/CV",async (req, res, next) => {
-    try{
-    res.setHeader("Content-Disposition", "attachment; filename=CV.pdf")
+// router.get("/:id/CV",async (req, res, next) => {
+//     try{
+//     res.setHeader("Content-Disposition", "attachment; filename=CV.pdf")
 
-	const profile = await ProfileModel.findById(req.params.id)
+// 	const profile = await ProfileModel.findById(req.params.id)
 
 
-	const source = getPDFReadableStream({ 
-		name: profile.name,
-        surname: profile.surname,
-		email: profile.email,
-        bio: profile.bio,
-        title: profile.title,
-        area: profile.area,
-        image: profile.image,
-        username: profile.username
+// 	const source = getPDFReadableStream({ 
+// 		name: profile.name,
+//         surname: profile.surname,
+// 		email: profile.email,
+//         bio: profile.bio,
+//         title: profile.title,
+//         area: profile.area,
+//         image: profile.image,
+//         username: profile.username
 
-    })
-		 // PDF READABLE STREAM
+//     })
+// 		 // PDF READABLE STREAM
+//     const destination = res
+
+//     pipeline(source, destination, err => {
+//       if (err) next(err)
+//     })
+//     }catch (error){
+//         next(error)
+//     }
+
+// })
+
+router.get("/:id/CV", async (req, res, next) => {
+  try {
+    const profile = await ProfileModel.findById(req.params.id)
+    res.setHeader("Content-Disposition", `attachment; filename=cv.pdf`)
+
+    const source = await getPDFReadableStream(profile) 
     const destination = res
 
     pipeline(source, destination, err => {
       if (err) next(err)
     })
-    }catch (error){
-        next(error)
-    }
-
+  } catch (error) {
+    next(error)
+  }
 })
 
 

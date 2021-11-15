@@ -11,7 +11,7 @@ import postRouter from './services/post/index.js';
 const server = express();
 
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3006
 
 // ********************************* MIDDLEWARES ***************************************
 
