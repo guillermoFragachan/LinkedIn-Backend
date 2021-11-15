@@ -28,8 +28,8 @@ const { Schema, model } = mongoose
 
 const ProfileSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, unique: true },
-    surname: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    surname: { type: String, required: true, },
     email: { type: String, required: true, unique: true },
     bio: { type: String, required: true },
     title: { type: String, required: true },
