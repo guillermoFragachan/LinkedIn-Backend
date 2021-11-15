@@ -51,21 +51,19 @@ const creatExperience = async (req, res, next) => {
 	}
 };
 
-const imgExperience =
-	(multer({ storage: cloudinaryStorage }).single('img'),
-	async (req, res, next) => {
-		try {
-			const experience = await experienceModel.findById(
-				req.params.experienceId,
-			);
-			console.log(req);
-			experience.image = req.file.path;
-			await image.save();
-			res.status(201).send(image);
-		} catch (error) {
-			next(error);
-		}
-	});
+const imgExperience =  async(req, res, next)=>{
+	    try{
+	    const profile = await experienceModel.findById(req.params.experienceId)
+		console.log(profile)
+	    profile.image = req.file.path
+	    await profile.save()
+	    res.status(201).send(profile)
+	    }catch (error){
+	        next(error)
+	    }
+	
+	  
+	  }
 
 const getExperienceById = async (req, res, next) => {
 	try {
