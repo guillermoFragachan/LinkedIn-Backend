@@ -1,5 +1,5 @@
 import express from 'express';
-import experienceendpoint from './routers.js';
+import experienceendpoint from './handler.js';
 
 const {
 	getAllExperience,
@@ -11,13 +11,12 @@ const {
 
 const experienceRouter = express.Router();
 
-experienceRouter.route('/experience/:userID').get(getAllExperience);
+experienceRouter.route('/').get(getAllExperience).get(getExperienceById);
 
 experienceRouter
-	.route('/:userID')
+	.route('/:userPassword')
 	.post(creatExperience)
 	.put(updateExperience)
-	.get(getExperienceById)
 	.delete(deleteExperience);
 
 export default experienceRouter;

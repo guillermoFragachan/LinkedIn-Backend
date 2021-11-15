@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import experienceModel from './schema.js';
+import experienceModel from './sechema.js';
 import q2m from 'query-to-mongo';
 
 const getAllExperience = async (req, res, next) => {
@@ -12,7 +12,10 @@ const getAllExperience = async (req, res, next) => {
 			.skip(querys.options.skip)
 			.sort(querys.options.sort);
 		res.send({
-			link: querys.links('/profile/:userId/experience', total),
+			link: querys.links(
+				'',
+				total,
+			),
 			pageTotal: Math.ceil(total / querys.options.limit),
 			total,
 			allExperience,

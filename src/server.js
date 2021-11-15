@@ -14,7 +14,7 @@ server.use(cors());
 server.use(express.json());
 
 // ********************************* ROUTES ********************************************
-server.use('/experience', experienceRouter);
+server.use('/profile/username/experience', experienceRouter);
 
 // ********************************* ERROR HANDLERS ************************************
 
