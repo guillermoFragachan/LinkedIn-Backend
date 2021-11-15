@@ -1,23 +1,25 @@
 import multer from 'multer';
+import json2csv from 'json2csv';
 import q2m from 'query-to-mongo';
 import { pipeline } from 'stream';
-import json2csv from 'json2csv';
-import createHttpError from 'http-errors';
-import { pdfStream } from './PDFStream.js';
 import experienceModel from './sechema.js';
+import createHttpError from 'http-errors';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import fs from 'fs-extra';
+
 const jsoncsv = json2csv;
-const { createReadStream } = fs;
-const cloudinaryStorage = new CloudinaryStorage({
-	cloudinary,
-	params: {
-		folder: 'Experience',
-	},
+
+const { CLOUDINARY_NAME, CLOUDINARY_KEY, CLOUDINARY_SECRET } = process.env;
+
+cloudinary.config({
+	cloud_name: CLOUDINARY_NAME,
+	api_key: CLOUDINARY_KEY,
+	api_secret: CLOUDINARY_SECRET,
 });
 
-const parcing = multer({ storage: cloudinaryStorage }).single('profilePic');
+const cloudinaryStorage = new CloudinaryStorage({
+	cloudinary: cloudinary,
+});
 
 const getAllExperience = async (req, res, next) => {
 	try {
@@ -50,20 +52,15 @@ const creatExperience = async (req, res, next) => {
 };
 
 const imgExperience =
-	(parcing,
+	(multer({ storage: cloudinaryStorage }).single('img'),
 	async (req, res, next) => {
 		try {
-			const allExperience = await experienceModel;
-			const index = allExperience.findIndex(
-				(p) => p.id === req.params.experienceId,
+			const experience = await experienceModel.findById(
+				req.params.experienceId,
 			);
-			const addImage = {
-				...allExperience[index],
-				image: req.file.path,
-			};
-			allExperience[index] = addImage;
-
-			res.send('ok');
+			experience.image = req.file.path;
+			await image.save();
+			res.status(201).send(image);
 		} catch (error) {
 			next(error);
 		}
@@ -138,26 +135,7 @@ const downloadCSV = async (req, res, next) => {
 	}
 };
 
-const downloadPDF = async (req, res, next) => {
-	// try {
-	// 	const id = req.params.experienceId;
-	// 	const destination = res;
-	// 	res.setHeader('Content-Disposition', 'attachment; filename=Experience.pdf');
-	// 	const source = await experienceModel.findById(id);
-	// 	console.error('req send');
-	// 	pipeline(source, destination, (err) => {
-	// 		if (err) {
-	// 			next(err);
-	// 		}
-	// 	});
-	// } catch (error) {
-	// 	console.error('req send');
-	// 	next(error);
-	// }
-};
-
 const experienceendpoint = {
-	downloadPDF,
 	downloadCSV,
 	imgExperience,
 	creatExperience,
