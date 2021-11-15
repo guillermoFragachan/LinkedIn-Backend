@@ -1,8 +1,5 @@
-import multer from 'multer';
 import express from 'express';
-import { v2 as cloudinary } from 'cloudinary';
 import experienceendpoint from './handler.js';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 const {
 	downloadCSV,
@@ -21,11 +18,12 @@ experienceRouter.route('/').get(getAllExperience).post(creatExperience);
 
 experienceRouter
 	.route('/:experienceId')
+	.put(imgExperience)
 	.put(updateExperience)
 	.get(getExperienceById)
-	.put(imgExperience)
-	.get(downloadPDF)
-	.get(downloadCSV)
 	.delete(deleteExperience);
+
+//experienceRouter.get('/:experienceId/downloadPDF', downloadPDF);
+experienceRouter.get('/:experienceId/downloadCSV', downloadCSV);
 
 export default experienceRouter;

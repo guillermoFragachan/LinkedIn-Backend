@@ -1,9 +1,14 @@
 import multer from 'multer';
 import q2m from 'query-to-mongo';
+import { pipeline } from 'stream';
+import json2csv from 'json2csv';
 import createHttpError from 'http-errors';
+import { pdfStream } from './PDFStream.js';
 import experienceModel from './sechema.js';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
+
+const jsoncsv = json2csv;
 
 const cloudinaryStorage = new CloudinaryStorage({
 	cloudinary,
@@ -11,6 +16,7 @@ const cloudinaryStorage = new CloudinaryStorage({
 		folder: 'Experience',
 	},
 });
+
 const parcing = multer({ storage: cloudinaryStorage }).single('profilePic');
 
 const getAllExperience = async (req, res, next) => {
@@ -107,25 +113,48 @@ const deleteExperience = async (req, res, next) => {
 	}
 };
 
-const downloadCSV =
-	('/downloadCSV',
-	(req, res, next) => {
-		try {
-		} catch (error) {
-			console.error('req send');
-			next(error);
-		}
-	});
+const downloadCSV = async (req, res, next) => {
+	try {
+		const id = req.params.experienceId;
+		const destination = res;
+		const getStream = () => createReadStream(dataFolder);
+		const source = await experienceModel.findById(id);
+		console.log(source);
+		const transform = new json2csv.Transform({
+			fields: [
+				'role',
+				'company',
+				'description',
+				'startDate',
+				'endDate',
+				'area',
+			],
+		});
+		pipeline(source, transform, destination, (err) => {
+			if (err) next(err);
+		});
+	} catch (error) {
+		next(error);
+	}
+};
 
-const downloadPDF =
-	('/downloadPDF',
-	(req, res, next) => {
-		try {
-		} catch (error) {
-			console.error('req send');
-			next(error);
-		}
-	});
+const downloadPDF = async (req, res, next) => {
+	// try {
+	// 	const id = req.params.experienceId;
+	// 	const destination = res;
+	// 	res.setHeader('Content-Disposition', 'attachment; filename=Experience.pdf');
+	// 	const source = await experienceModel.findById(id);
+	// 	console.error('req send');
+	// 	pipeline(source, destination, (err) => {
+	// 		if (err) {
+	// 			next(err);
+	// 		}
+	// 	});
+	// } catch (error) {
+	// 	console.error('req send');
+	// 	next(error);
+	// }
+};
 
 const experienceendpoint = {
 	downloadPDF,
