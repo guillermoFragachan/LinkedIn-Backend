@@ -13,7 +13,8 @@ export const getPDFReadableStream = data => {
   
     },
   }
-
+  let  docDefinition = {}
+  let options = {}
 
   /* 
    
@@ -25,39 +26,66 @@ export const getPDFReadableStream = data => {
         area: profile.area,
         image: profile.image,
         username: profile.username
-
-
   
-
 */
 
   const printer = new PdfPrinter(fonts)
 
-  const docDefinition = {
-    content: [data.name, 
-              data.surname,
-               data.email, 
-               data.bio,
-               data.title,
-               data.area,,
-               data.image,
-               data.username],
-    defaultStyle: {
-      font: "Helvetica",
-    },
-    
-    // ...
-  }
+  if(data.image !== '') {
 
-  const options = {
-    // ...
-  }
+    docDefinition = {
+      content: [data.name, 
+                data.surname,
+                 data.email, 
+                 data.bio,
+                 data.title,
+                 data.area,,
+                 data.image,
+                 data.username],
+      defaultStyle: {
+        font: "Helvetica",
+      },
+      
+      // ...
+    }
+  
+     options = {
+      // ...
+    }
 
+
+
+
+
+  }else{
+     docDefinition = {
+      content: [data.name, 
+                data.surname,
+                 data.email, 
+                 data.bio,
+                 data.title,
+                 data.area,,
+                 data.image,
+                 data.username],
+      defaultStyle: {
+        font: "Helvetica",
+      },
+      
+      // ...
+    }
+  
+     options = {
+      // ...
+    }
+
+   
+  }
   const pdfReadableStream = printer.createPdfKitDocument(docDefinition, options)
   // pdfReadableStream.pipe(fs.createWriteStream('document.pdf')); // old syntax for piping
   // pipeline(pdfReadableStream, fs.createWriteStream('document.pdf')) // new syntax for piping (we don't want to pipe pdf into file on disk right now)
   pdfReadableStream.end()
   return pdfReadableStream
+
 }
 
 
