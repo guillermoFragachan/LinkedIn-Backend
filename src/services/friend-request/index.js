@@ -7,11 +7,11 @@ import FriendRequestSchema from "./schema.js";
 const router = express.Router();
 
 
-router.post("/:userId", async (req, res) => {
+router.post("/send/:userId", async (req, res) => {
     try {
-        const userReceived = req.params.userId;
-        req.body.userReceived = userReceived;
-        const friendRequest = await FriendRequestSchema.create(req.body);
+        const userReceived = req.params.userId
+        req.body.userReceived = userReceived
+        const friendRequest = await FriendRequestSchema.create(req.body)
         res.json(req.body)
     } catch (error) {
         res.json({ message: error.message })
@@ -23,6 +23,16 @@ router.delete("/:id", async (req, res) => {
         const id = req.params.id
         const deletedFriendRequest = await FriendRequestSchema.findByIdAndDelete(id)
         res.json(deletedFriendRequest)
+    } catch (error) {
+        res.json({ message: error.message })
+    }
+})
+
+router.put("/:id", async (req, res) => {
+    try {
+        const id = req.params.id
+        const updatedFriendRequest = await FriendRequestSchema.findByIdAndUpdate(id, req.body, { new: true })
+        res.json(updatedFriendRequest)
     } catch (error) {
         res.json({ message: error.message })
     }
