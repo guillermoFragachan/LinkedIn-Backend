@@ -37,7 +37,7 @@ const ProfileSchema = new mongoose.Schema(
     area: { type: String, required: true },
     image: { type: String, defaut: ""},
     username: { type: String, required: true, unique: true },
-    friendRequests: {type: Schema.Types.ObjectId, ref: "FriendRequest"},
+    friendRequests: [{type: Schema.Types.ObjectId, ref: "FriendRequest"}],
     
          
       
