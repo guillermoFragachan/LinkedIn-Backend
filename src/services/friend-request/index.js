@@ -12,6 +12,7 @@ router.post("/send/:userId", async (req, res, next) => {
     try {
         if(req.body.userSent.toString() === req.params.userId.toString()){
 
+<<<<<<< HEAD
 
             res.status(401).send("You can't send friend request yourself")
 
@@ -54,42 +55,36 @@ router.delete("/:id", async (req, res) => {
     }
 })
 
-
-
-router.put("/:id", async (req, res,next) => {
-  try{
+router.put("/:id", async (req, res) => {
+=======
+router.put("/:id", async (req, res) => {
+  try {
     const id = req.params.id;
-    if(req.body.status === "accepted"){
-      const userReceived = id
-      const userSent = req.body.userSent
-
-      const getProfile = await ProfileModel.findByIdAndUpdate(userReceived , {
-        $push: { friends: userSent },
-      })
-
-      const getProfile2 = await ProfileModel.findByIdAndUpdate(userSent , {
-        $push: { friends: userReceived },
-
-      })
-
-      const friendRequest = await FriendRequestSchema.findByIdAndDelete(id)
-      const getProfiles = await ProfileModel.find()
-      res.send(getProfiles)
-    }else if(req.body.status === "rejected"){
-      const deletedFriendRequest = await FriendRequestSchema.findByIdAndDelete(id)
-      res.send(deletedFriendRequest)
-
-    }
-    else{
-      res.status(400).send("Invalid status");
-    }
-  
-
-
-  }catch(error){
-    res.send(error);
+    const updatedFriendRequest = await FriendRequestSchema.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
+    res.json(updatedFriendRequest);
+  } catch (error) {
+    res.json({ message: error.message });
   }
-}) 
+});
+
+router.get("/", async (req, res) => {
+>>>>>>> parent of 753a174 (content)
+  try {
+    const id = req.params.id;
+    const updatedFriendRequest = await FriendRequestSchema.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
+    res.json(updatedFriendRequest);
+  } catch (error) {
+    res.json({ message: error.message });
+  }
+});
 
 router.get("/", async (req, res) => {
     try {
