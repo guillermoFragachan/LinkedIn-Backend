@@ -53,16 +53,9 @@ router.get('/', async (req, res, next) => {
         const profilesToShow = await ProfileModel.find(mongoQuery.criteria)
         .limit(mongoQuery.options.limit)    
         .skip(mongoQuery.options.skip)
-<<<<<<< HEAD
-<<<<<<< HEAD
         .populate({path:"friendRequests",populate:[{path:"userSent",select:"name"},{path:"userReceived",select:"name"}]})
         // .populate({path:"friends"})
-=======
-        .populate({path:"friendRequests",populate:[{path:"userSent",select:"name,email,image"},{path:"userReceived",select:"name"}]})
->>>>>>> parent of 753a174 (content)
-=======
-        .populate({path:"friendRequests",populate:[{path:"userSent",select:"name,email,image"},{path:"userReceived",select:"name"}]})
->>>>>>> parent of 753a174 (content)
+
 
 
         const profiles = await ProfileModel.find({})
