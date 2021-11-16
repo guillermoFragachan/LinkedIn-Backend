@@ -1,5 +1,6 @@
 import express from "express";
 import ProfileModel from "./sechema.js";
+import experienceModel from "../experience/sechema.js"
 // import {getPDFReadableStream} from "./lib.js"
 import { pipeline } from "stream"
 import { CloudinaryStorage } from "multer-storage-cloudinary"
@@ -9,6 +10,18 @@ import { getPDFReadableStream } from "./pdf.js";
 import q2m from "query-to-mongo"
 
 
+import experienceendpoint from "../experience/handler.js";
+
+const {
+	downloadCSV,
+	downloadPDF,
+	imgExperience,
+	creatExperience,
+	updateExperience,
+	getAllExperience,
+	deleteExperience,
+	getExperienceById,
+} = experienceendpoint;
 
 
 //*************************************    CLAUDINARY     *************************** 
@@ -151,11 +164,26 @@ router.get("/:id/CV", async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
     try{
+        await ProfileModel.deleteMany({})
         await ProfileModel.findByIdAndDelete(req.params.id)
         res.send(204)
     }catch (error){
         next(error)
     }
 })
+
+router.route("/:username/experiences").get(getAllExperience).post(creatExperience);
+
+router.route("/:username/experiences/:expId")
+.put(updateExperience)
+.get(getExperienceById)
+.delete(deleteExperience);
+
+router.route("/:username/experiences/:expId/picture")
+.put(imgExperience)
+
+router.route("/:username/experiences/csv")
+.get(downloadCSV)
+
 
 export default router
