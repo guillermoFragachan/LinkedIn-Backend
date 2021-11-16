@@ -10,6 +10,7 @@ import q2m from "query-to-mongo"
 
 
 
+
 //*************************************    CLAUDINARY     *************************** 
 const { CLOUDINARY_NAME, CLOUDINARY_KEY, CLOUDINARY_SECRET } = process.env;
 
@@ -49,13 +50,14 @@ router.get('/', async (req, res, next) => {
         const mongoQuery = q2m(req.query)
         const total = await ProfileModel.countDocuments(mongoQuery.criteria)
 
-        // const profilesToShow = await ProfileModel.find(mongoQuery.criteria)
-        // .limit(mongoQuery.options.limit)    
-        // .skip(mongoQuery.options.skip)
-        // .populate({path: "requests"})
+        const profilesToShow = await ProfileModel.find(mongoQuery.criteria)
+        .limit(mongoQuery.options.limit)    
+        .skip(mongoQuery.options.skip)
+        .populate({path: "friendRequests"})
+
 
         const profiles = await ProfileModel.find({})
-        res.send(profiles)
+        res.send(profilesToShow)
     }catch (error){
         next(error)
     }

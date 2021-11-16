@@ -1,5 +1,6 @@
 import express from "express";
 import FriendRequestSchema from "./schema.js";
+import ProfileModel from "../profile/sechema.js"
 
 
 
@@ -19,9 +20,21 @@ router.post("/send/:userId", async (req, res, next) => {
                
             else{
 
-            const userReceived = req.params.userId
+            
+            
+            const userReceived = req.params.userId // recevier from params
             req.body.userReceived = userReceived
+            
             const friendRequest = await FriendRequestSchema.create(req.body)
+
+            const getProfile = await ProfileModel.findByIdAndUpdate(
+                 userReceived,
+                 {$push: {friendRequests: friendRequest._id}},
+            
+            )
+            
+
+
             res.json(req.body)}
             
         
