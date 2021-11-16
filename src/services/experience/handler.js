@@ -37,7 +37,8 @@ const getAllExperience = async (req, res, next) => {
 
 const creatExperience = async (req, res, next) => {
 	try {
-		const newexperience = new experienceModel(req.body);
+		const username = req.params.username
+		const newexperience = new experienceModel({...req.body, "username":username});
 		const { _id } = await newexperience.save();
 		res.status(200).send(_id);
 	} catch (error) {
@@ -67,7 +68,7 @@ const imgExperience =
 
 const getExperienceById = async (req, res, next) => {
 	try {
-		const id = req.params.experienceId;
+		const id = req.params.expId;
 		const experience = await experienceModel.findById(id);
 		if (experience) {
 			res.send(experience);
