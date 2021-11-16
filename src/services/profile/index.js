@@ -7,6 +7,9 @@ import { CloudinaryStorage } from "multer-storage-cloudinary"
 import multer from "multer"
 import { v2 as cloudinary } from "cloudinary"
 import { getPDFReadableStream } from "./pdf.js";
+import q2m from "query-to-mongo"
+
+
 import experienceendpoint from "../experience/handler.js";
 
 const {
@@ -53,8 +56,21 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
     try{
-        const profiles = await ProfileModel.find({})
-        res.send(profiles)
+
+
+      
+
+        const mongoQuery = q2m(req.query)
+        const total = await ProfileModel.countDocuments(mongoQuery.criteria)
+
+        const profilesToShow = await ProfileModel.find(mongoQuery.criteria)
+        .limit(mongoQuery.options.limit)    
+        .skip(mongoQuery.options.skip)
+        .populate({path:"friendRequests",populate:[{path:"userSent",select:"name,email,image"},{path:"userReceived",select:"name"}]})
+        .populate({path:"friends"})
+
+
+        res.send(profilesToShow)
     }catch (error){
         next(error)
     }
