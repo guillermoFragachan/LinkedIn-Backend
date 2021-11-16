@@ -2,17 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import mongoose from "mongoose"
-import profileRouter from './services/profile/index.js'
+import profileRouter from "./services/profile/index.js"
 import postRouter from './services/post/index.js';
-import experienceRouter from './services/experience/index.js';
-
-
-
+// import experienceRouter from './services/experience/index.js';
 
 const server = express();
 
 
 const port = process.env.PORT || 3006
+
 
 const whitelist = [process.env.FE_URL , process.env.FE_DEV_URL]
 const corsOptions = {
@@ -31,7 +29,7 @@ server.use(cors(corsOptions))
 server.use(express.json())
 
 // ********************************* ROUTES ********************************************
-server.use('/experience', experienceRouter)
+// server.use('/experience', experienceRouter)
 server.use('/profile', profileRouter)
 server.use("/posts", postRouter)
 

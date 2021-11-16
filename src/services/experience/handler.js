@@ -18,7 +18,9 @@ const getAllExperience = async (req, res, next) => {
 		const querys = q2m(req.query);
 		const total = await experienceModel.countDocuments(querys.criteria);
 		const allExperience = await experienceModel
-			.find(querys.criteria)
+			.find({
+				"username" : req.params.username
+			})
 			.limit(querys.options.limit)
 			.skip(querys.options.skip)
 			.sort(querys.options.sort);
@@ -35,7 +37,8 @@ const getAllExperience = async (req, res, next) => {
 
 const creatExperience = async (req, res, next) => {
 	try {
-		const newexperience = new experienceModel(req.body);
+		const username = req.params.username
+		const newexperience = new experienceModel({...req.body, "username":username});
 		const { _id } = await newexperience.save();
 		res.status(200).send(_id);
 	} catch (error) {
@@ -65,7 +68,7 @@ const imgExperience =
 
 const getExperienceById = async (req, res, next) => {
 	try {
-		const id = req.params.experienceId;
+		const id = req.params.expId;
 		const experience = await experienceModel.findById(id);
 		if (experience) {
 			res.send(experience);
