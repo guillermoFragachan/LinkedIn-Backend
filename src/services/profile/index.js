@@ -166,5 +166,8 @@ router.route("/:username/experiences/:expId")
 router.route("/:username/experiences/:expId/picture")
 .put(imgExperience)
 
+router.route("/:username/experiences/csv")
+.get(downloadCSV)
+
 
 export default router
