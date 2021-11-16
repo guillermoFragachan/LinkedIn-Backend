@@ -6,6 +6,8 @@ import { CloudinaryStorage } from "multer-storage-cloudinary"
 import multer from "multer"
 import { v2 as cloudinary } from "cloudinary"
 import { getPDFReadableStream } from "./pdf.js";
+import q2m from "query-to-mongo"
+
 
 
 //*************************************    CLAUDINARY     *************************** 
@@ -40,6 +42,18 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
     try{
+
+
+      
+
+        const mongoQuery = q2m(req.query)
+        const total = await ProfileModel.countDocuments(mongoQuery.criteria)
+
+        // const profilesToShow = await ProfileModel.find(mongoQuery.criteria)
+        // .limit(mongoQuery.options.limit)    
+        // .skip(mongoQuery.options.skip)
+        // .populate({path: "requests"})
+
         const profiles = await ProfileModel.find({})
         res.send(profiles)
     }catch (error){

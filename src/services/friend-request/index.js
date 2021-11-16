@@ -7,13 +7,26 @@ import FriendRequestSchema from "./schema.js";
 const router = express.Router();
 
 
-router.post("/send/:userId", async (req, res) => {
+router.post("/send/:userId", async (req, res, next) => {
     try {
-        const userReceived = req.params.userId
-        req.body.userReceived = userReceived
-        const friendRequest = await FriendRequestSchema.create(req.body)
-        res.json(req.body)
-    } catch (error) {
+        if(req.body.userSent.toString() === req.params.userId.toString()){
+
+
+            res.status(401).send("You can't send friend request yourself")
+
+
+        }
+               
+            else{
+
+            const userReceived = req.params.userId
+            req.body.userReceived = userReceived
+            const friendRequest = await FriendRequestSchema.create(req.body)
+            res.json(req.body)}
+            
+        
+            }
+     catch (error) {
         res.json({ message: error.message })
     }
 })
