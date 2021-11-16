@@ -18,7 +18,9 @@ const getAllExperience = async (req, res, next) => {
 		const querys = q2m(req.query);
 		const total = await experienceModel.countDocuments(querys.criteria);
 		const allExperience = await experienceModel
-			.find(querys.criteria)
+			.find({
+				"username" : req.params.username
+			})
 			.limit(querys.options.limit)
 			.skip(querys.options.skip)
 			.sort(querys.options.sort);
