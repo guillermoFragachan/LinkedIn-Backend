@@ -54,9 +54,9 @@ router.get('/', async (req, res, next) => {
         .limit(mongoQuery.options.limit)    
         .skip(mongoQuery.options.skip)
         .populate({path:"friendRequests",populate:[{path:"userSent",select:"name,email,image"},{path:"userReceived",select:"name"}]})
+        // .populate({path:"friends"})
 
 
-        const profiles = await ProfileModel.find({})
         res.send(profilesToShow)
     }catch (error){
         next(error)

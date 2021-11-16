@@ -48,7 +48,7 @@ const ProfileSchema = new mongoose.Schema(
     
          
       
-    // friends: [{ type: Schema.Types.ObjectId, ref: "Friends" }],
+    // friends: [{ type: Schema.Types.ObjectId, ref: "Profile" }],
 
   
 
