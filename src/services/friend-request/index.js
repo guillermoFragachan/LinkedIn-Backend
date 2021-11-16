@@ -43,21 +43,31 @@ router.put("/:id", async (req, res,next) => {
   try{
     const id = req.params.id;
     if(req.body.status === "accepted"){
-      const userReceived = id
-      const userSent = req.body.userSent
+
+      const friendRequest = await FriendRequestSchema.findById(id)
+
+
+      const userReceived = friendRequest.userReceived;
+      const userSent = friendRequest.userSent;
+
 
       const getProfile = await ProfileModel.findByIdAndUpdate(userReceived , {
         $push: { friends: userSent },
-      })
+        
+      },
+      {new: true})
 
       const getProfile2 = await ProfileModel.findByIdAndUpdate(userSent , {
         $push: { friends: userReceived },
 
-      })
+      },
+      {new: true})
 
-      const friendRequest = await FriendRequestSchema.findByIdAndDelete(id)
-      const getProfiles = await ProfileModel.find()
-      res.send(getProfiles)
+      const friendRequestDelete = await FriendRequestSchema.findByIdAndDelete(id)
+  
+
+      res.send(getProfile2, getProfile)
+
     }else if(req.body.status === "rejected"){
       const deletedFriendRequest = await FriendRequestSchema.findByIdAndDelete(id)
       res.send(deletedFriendRequest)

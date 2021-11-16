@@ -49,13 +49,12 @@ router.get('/', async (req, res, next) => {
 
         const mongoQuery = q2m(req.query)
         const total = await ProfileModel.countDocuments(mongoQuery.criteria)
-        console.log('dasd')
 
         const profilesToShow = await ProfileModel.find(mongoQuery.criteria)
         .limit(mongoQuery.options.limit)    
         .skip(mongoQuery.options.skip)
         .populate({path:"friendRequests",populate:[{path:"userSent",select:"name,email,image"},{path:"userReceived",select:"name"}]})
-        // .populate({path:"friends", populate:[{path:""}]})
+        .populate({path:"friends"})
 
 
         res.send(profilesToShow)
