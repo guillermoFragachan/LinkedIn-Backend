@@ -12,8 +12,8 @@ router.post("/send/:userId", async (req, res, next) => {
       const userReceived = req.params.userId; // recevier from params
       req.body.userReceived = userReceived;
 
-      const userSent = req.headers.id; 
-      req.body.userSent = userSent;
+      // const userSent = req.headers.id; 
+      // req.body.userSent = userSent;
 
       const friendRequest = await new FriendRequestSchema(req.body).save();
 
