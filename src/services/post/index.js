@@ -3,6 +3,7 @@ import q2m from "query-to-mongo"
 import PostModel from "./sechema.js"
 import commentsHandlers from "../comments/index.js"
 import CommentModel from "../comments/schema.js"
+import ProfileSchema from "../profile/sechema.js"
 import { CloudinaryStorage } from "multer-storage-cloudinary"
 import multer from "multer"
 import { v2 as cloudinary } from "cloudinary"
@@ -38,10 +39,23 @@ postRouter.post( "/", async(req,res, next)=> {
 postRouter.get("/", async(req,res,next)=> {
 
   try {
-    const mongoQuery = q2m(req.query)
+    if(req.headers.userid){
+      const profile = await ProfileSchema.findById(req.headers.userid)
+    const postOfFriends = []
+    const x = profile.friends
+    for(let i = 0; i < x.length; i++) {
+      const friendsProfile = await ProfileSchema.findById(x[i])
+      
+      console.log(friendsProfile)
+      const foundpost = await PostModel.find({username: friendsProfile.username})
+      postOfFriends.push(foundpost)
+    }
+    
+    console.log(postOfFriends)
+    res.send({postOfFriends})
+    } else {
+      const mongoQuery = q2m(req.query)
     const total = await PostModel.countDocuments(mongoQuery.criteria)
-
-
     const postToShow = await PostModel.find(mongoQuery.criteria)
     .limit(mongoQuery.options.limit)
     .skip(mongoQuery.options.skip)
@@ -51,6 +65,8 @@ postRouter.get("/", async(req,res,next)=> {
     
     
     res.send(postToShow)
+
+    }
   }catch (error) {
     next(error)
   }
