@@ -4,7 +4,9 @@ import listEndpoints from 'express-list-endpoints';
 import mongoose from "mongoose"
 import profileRouter from "./services/profile/index.js"
 import postRouter from './services/post/index.js';
-// import experienceRouter from './services/experience/index.js';
+import experienceRouter from './services/experience/index.js';
+import friendRequestRouter from './services/friend-request/index.js';
+
 
 const server = express();
 
@@ -32,6 +34,7 @@ server.use(express.json())
 // server.use('/experience', experienceRouter)
 server.use('/profile', profileRouter)
 server.use("/posts", postRouter)
+server.use("/request", friendRequestRouter)
 
 // ********************************* ERROR HANDLERS ************************************
 

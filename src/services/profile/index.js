@@ -1,24 +1,14 @@
 import express from "express";
 import ProfileModel from "./sechema.js";
-import experienceModel from "../experience/sechema.js"
 // import {getPDFReadableStream} from "./lib.js"
 import { pipeline } from "stream"
 import { CloudinaryStorage } from "multer-storage-cloudinary"
 import multer from "multer"
 import { v2 as cloudinary } from "cloudinary"
 import { getPDFReadableStream } from "./pdf.js";
-import experienceendpoint from "../experience/handler.js";
+import q2m from "query-to-mongo"
 
-const {
-	downloadCSV,
-	downloadPDF,
-	imgExperience,
-	creatExperience,
-	updateExperience,
-	getAllExperience,
-	deleteExperience,
-	getExperienceById,
-} = experienceendpoint;
+
 
 
 //*************************************    CLAUDINARY     *************************** 
@@ -53,8 +43,21 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
     try{
-        const profiles = await ProfileModel.find({})
-        res.send(profiles)
+
+
+      
+
+        const mongoQuery = q2m(req.query)
+        const total = await ProfileModel.countDocuments(mongoQuery.criteria)
+
+        const profilesToShow = await ProfileModel.find(mongoQuery.criteria)
+        .limit(mongoQuery.options.limit)    
+        .skip(mongoQuery.options.skip)
+        .populate({path:"friendRequests",populate:[{path:"userSent",select:"name,email,image"},{path:"userReceived",select:"name"}]})
+        .populate({path:"friends"})
+
+
+        res.send(profilesToShow)
     }catch (error){
         next(error)
     }
@@ -148,26 +151,11 @@ router.get("/:id/CV", async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
     try{
-        await ProfileModel.deleteMany({})
         await ProfileModel.findByIdAndDelete(req.params.id)
         res.send(204)
     }catch (error){
         next(error)
     }
 })
-
-router.route("/:username/experiences").get(getAllExperience).post(creatExperience);
-
-router.route("/:username/experiences/:expId")
-.put(updateExperience)
-.get(getExperienceById)
-.delete(deleteExperience);
-
-router.route("/:username/experiences/:expId/picture")
-.put(imgExperience)
-
-router.route("/:username/experiences/csv")
-.get(downloadCSV)
-
 
 export default router
