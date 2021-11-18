@@ -148,7 +148,7 @@ postRouter.get("/:postId", async(req, res, next)=> {
 
         const post = await PostModel.findById(req.params.postId)
         if (post) {
-            console.log(post.likes.length)
+            console.log(post.likes.user)
             res.send(post.likes)
         }else{
             res
@@ -161,6 +161,7 @@ postRouter.get("/:postId", async(req, res, next)=> {
       
   })
 
+ 
 
 //*******COMMENT ENDPOINTS */
 
