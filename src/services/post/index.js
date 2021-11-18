@@ -45,6 +45,8 @@ postRouter.get("/", async(req,res,next)=> {
     const x = profile.friends
     for(let i = 0; i < x.length; i++) {
       const friendsProfile = await ProfileSchema.findById(x[i])
+      .populate({path: "likes.user", select:"_id, name"})
+
       
       console.log(friendsProfile)
       const foundpost = await PostModel.find({username: friendsProfile.username})
@@ -59,7 +61,7 @@ postRouter.get("/", async(req,res,next)=> {
     const postToShow = await PostModel.find(mongoQuery.criteria)
     .limit(mongoQuery.options.limit)
     .skip(mongoQuery.options.skip)
-    .populate({path: "user"})
+    .populate({path: "likes.user", select:"_id, name"})
     
     console.log(mongoQuery)
     
@@ -77,6 +79,7 @@ postRouter.get("/:postId", async(req, res, next)=> {
     const id = req.params.postId
     
     const post = await PostModel.findById(id)
+    .populate({path: "likes.user", select:"_id, name"})
     if (post) {
       res.send(post)
     }else{
