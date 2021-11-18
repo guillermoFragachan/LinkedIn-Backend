@@ -6,6 +6,20 @@ import { CloudinaryStorage } from "multer-storage-cloudinary"
 import multer from "multer"
 import { v2 as cloudinary } from "cloudinary"
 import { getPDFReadableStream } from "./pdf.js";
+import q2m from "query-to-mongo"
+import experienceendpoint from "../experience/handler.js";
+
+const {
+	downloadCSV,
+	downloadPDF,
+	imgExperience,
+	creatExperience,
+	updateExperience,
+	getAllExperience,
+	deleteExperience,
+	getExperienceById,
+} = experienceendpoint;
+
 
 
 //*************************************    CLAUDINARY     *************************** 
@@ -40,8 +54,21 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
     try{
-        const profiles = await ProfileModel.find({})
-        res.send(profiles)
+
+
+      
+
+        const mongoQuery = q2m(req.query)
+        const total = await ProfileModel.countDocuments(mongoQuery.criteria)
+
+        const profilesToShow = await ProfileModel.find(mongoQuery.criteria)
+        .limit(mongoQuery.options.limit)    
+        .skip(mongoQuery.options.skip)
+        .populate({path:"friendRequests",populate:[{path:"userSent",select:"name,email,image"},{path:"userReceived",select:"name"}]})
+        .populate({path:"friends"})
+
+
+        res.send(profilesToShow)
     }catch (error){
         next(error)
     }
@@ -50,6 +77,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
     try{
         const profile = await ProfileModel.findById(req.params.id)
+        .populate({path:"friendRequests",populate:[{path:"userSent",select:"name"},{path:"userReceived",select:"name"}]})
         res.send(profile)
     }catch (error){
         next(error)
@@ -141,5 +169,18 @@ router.delete('/:id', async (req, res, next) => {
         next(error)
     }
 })
+
+router.route("/:username/experiences").get(getAllExperience).post(creatExperience);
+
+router.route("/:username/experiences/:expId")
+.put(updateExperience)
+.get(getExperienceById)
+.delete(deleteExperience);
+
+router.route("/:username/experiences/:expId/picture")
+.put(imgExperience)
+
+router.route("/:experienceId/csv")
+.get(downloadCSV)
 
 export default router

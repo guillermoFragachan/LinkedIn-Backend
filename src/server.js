@@ -5,6 +5,8 @@ import mongoose from "mongoose"
 import profileRouter from "./services/profile/index.js"
 import postRouter from './services/post/index.js';
 import experienceRouter from './services/experience/index.js';
+import friendRequestRouter from './services/friend-request/index.js';
+
 
 const server = express();
 
@@ -12,15 +14,27 @@ const server = express();
 const port = process.env.PORT || 3006
 
 
+const whitelist = [process.env.FE_URL , process.env.FE_DEV_URL]
+const corsOptions = {
+    origin : function (origin, next) { 
+        if (!origin || whitelist.indexOf(origin) !== -1) {
+            next(null , true)
+        } else {
+            next(new Error("CROSS ORIGIN ERROR"))
+        }
+    }
+}
+
 // ********************************* MIDDLEWARES ***************************************
 
-server.use(cors())
+server.use(cors(corsOptions))
 server.use(express.json())
 
 // ********************************* ROUTES ********************************************
-server.use('/experience', experienceRouter)
+// server.use('/experience', experienceRouter)
 server.use('/profile', profileRouter)
 server.use("/posts", postRouter)
+server.use("/request", friendRequestRouter)
 
 // ********************************* ERROR HANDLERS ************************************
 

@@ -22,6 +22,7 @@
 */
 
 import mongoose from "mongoose";
+import friendRequestSchema from "../friend-request/schema.js";
 
 const { Schema, model } = mongoose
 
@@ -36,6 +37,13 @@ const ProfileSchema = new mongoose.Schema(
     area: { type: String, required: true },
     image: { type: String, defaut: ""},
     username: { type: String, required: true, unique: true },
+    friendRequests:[ {type: Schema.Types.ObjectId, ref: "FriendRequest"}],
+    
+         
+      
+    friends: [{ type: Schema.Types.ObjectId, ref: "Profile" }],
+
+  
 
   },
   { timestamps: true }
