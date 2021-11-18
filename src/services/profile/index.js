@@ -7,7 +7,18 @@ import multer from "multer"
 import { v2 as cloudinary } from "cloudinary"
 import { getPDFReadableStream } from "./pdf.js";
 import q2m from "query-to-mongo"
+import experienceendpoint from "../experience/handler.js";
 
+const {
+	downloadCSV,
+	downloadPDF,
+	imgExperience,
+	creatExperience,
+	updateExperience,
+	getAllExperience,
+	deleteExperience,
+	getExperienceById,
+} = experienceendpoint;
 
 
 
@@ -158,5 +169,18 @@ router.delete('/:id', async (req, res, next) => {
         next(error)
     }
 })
+
+router.route("/:username/experiences").get(getAllExperience).post(creatExperience);
+
+router.route("/:username/experiences/:expId")
+.put(updateExperience)
+.get(getExperienceById)
+.delete(deleteExperience);
+
+router.route("/:username/experiences/:expId/picture")
+.put(imgExperience)
+
+router.route("/:username/experiences/csv")
+.get(downloadCSV)
 
 export default router
