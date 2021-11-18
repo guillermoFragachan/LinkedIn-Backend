@@ -180,7 +180,7 @@ router.route("/:username/experiences/:expId")
 router.route("/:username/experiences/:expId/picture")
 .put(imgExperience)
 
-router.route("/:username/experiences/csv")
+router.route("/:experienceId/csv")
 .get(downloadCSV)
 
 export default router

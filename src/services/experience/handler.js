@@ -4,6 +4,9 @@ import createHttpError from 'http-errors';
 import experienceModel from './sechema.js';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import json2csv from 'json2csv';
+import { pipeline } from 'stream';
+
 
 const cloudinaryStorage = new CloudinaryStorage({
 	cloudinary,
@@ -111,9 +114,27 @@ const deleteExperience = async (req, res, next) => {
 };
 
 const downloadCSV =
-	('/downloadCSV',
-	(req, res, next) => {
+	('/downloadCSV', async (req, res, next) => {
 		try {
+			
+		const id = req.params.experienceId;
+		const destination = res;
+		const data = await experienceModel.findById(id);
+		const json = JSON.stringify(data);
+		console.log(json);
+		const transform = new json2csv.Transform({
+			fields: [
+				'role',
+				'company',
+				'description',
+				'startDate',
+				'endDate',
+				'area',
+			],
+		});
+		pipeline(json, transform, destination, (err) => {
+			if (err) next(err);
+		});
 		} catch (error) {
 			console.error('req send');
 			next(error);
