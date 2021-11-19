@@ -7,7 +7,6 @@ import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import json2csv from 'json2csv';
 import { pipeline } from 'stream';
 
-
 const cloudinaryStorage = new CloudinaryStorage({
 	cloudinary,
 	params: {
@@ -113,33 +112,33 @@ const deleteExperience = async (req, res, next) => {
 	}
 };
 
-const downloadCSV =
-	('/downloadCSV', async (req, res, next) => {
-		try {
-			
-		const id = req.params.experienceId;
-		const destination = res;
-		const data = await experienceModel.findById(id);
-		const json = JSON.stringify(data);
-		console.log(json);
-		const transform = new json2csv.Transform({
-			fields: [
-				'role',
-				'company',
-				'description',
-				'startDate',
-				'endDate',
-				'area',
-			],
-		});
-		pipeline(json, transform, destination, (err) => {
-			if (err) next(err);
-		});
-		} catch (error) {
-			console.error('req send');
-			next(error);
-		}
+const downloadCSV = async (req, res, next)=> {
+	try {
+		
+	const id = req.params.experienceId;
+	const destination = res;
+	const data = await experienceModel.find({"username": req.params.username});
+	const json = JSON.stringify(data);
+	res.setHeader("Content-Disposition", "attachment; filename=exp.csv")
+	const transform = new json2csv.Transform({
+		fields: [
+			'role',
+			'company',
+			'description',
+			'startDate',
+			'endDate',
+			'area',
+		],
 	});
+	pipeline(json, transform, destination, (err) => {
+		if (err) next(err);
+
+	});
+	} catch (error) {
+		console.error('req send');
+		next(error);
+	}
+};
 
 const downloadPDF =
 	('/downloadPDF',
