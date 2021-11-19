@@ -171,6 +171,9 @@ router.delete('/:id', async (req, res, next) => {
 
 router.route("/:username/experiences").get(getAllExperience).post(creatExperience);
 
+router.route("/:username/experiences/csv")
+.get(downloadCSV)
+
 router.route("/:username/experiences/:expId")
 .put(updateExperience)
 .get(getExperienceById)
@@ -179,7 +182,6 @@ router.route("/:username/experiences/:expId")
 router.route("/:username/experiences/:expId/picture")
 .put(imgExperience)
 
-router.route("/:username/experiences/csv")
-.get(downloadCSV)
+
 
 export default router
