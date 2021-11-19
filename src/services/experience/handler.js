@@ -53,15 +53,22 @@ const imgExperience =
 	(parcing,
 	async (req, res, next) => {
 		try {
-			const allExperience = await experienceModel;
-			const index = allExperience.findIndex(
-				(p) => p.id === req.params.experienceId,
-			);
-			const addImage = {
-				...allExperience[index],
-				image: req.file.path,
-			};
-			allExperience[index] = addImage;
+			const allExperiences = await experienceModel.findById(req.params.experienceId);
+			console.log(req.file)
+			allExperiences.image = req.file.path;
+			await allExperiences.save();
+			res.status(200).send(allExperiences);
+			
+
+
+			/*
+			
+			const profile = await ProfileModel.findById(req.params.id)
+    profile.image = req.file.path
+    await profile.save()
+    res.status(201).send(profile)
+			
+			*/
 
 			res.send('ok');
 		} catch (error) {
@@ -71,7 +78,7 @@ const imgExperience =
 
 const getExperienceById = async (req, res, next) => {
 	try {
-		const id = req.params.expId;
+		const id = req.params.experienceId;
 		const experience = await experienceModel.findById(id);
 		if (experience) {
 			res.send(experience);

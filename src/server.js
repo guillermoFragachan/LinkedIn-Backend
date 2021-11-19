@@ -35,6 +35,7 @@ server.use(express.json())
 server.use('/profile', profileRouter)
 server.use("/posts", postRouter)
 server.use("/request", friendRequestRouter)
+server.use("/experience", experienceRouter)
 
 // ********************************* ERROR HANDLERS ************************************
 

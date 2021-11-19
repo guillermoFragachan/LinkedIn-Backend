@@ -177,7 +177,7 @@ router.route("/:username/experiences/:expId")
 .get(getExperienceById)
 .delete(deleteExperience);
 
-router.route("/:username/experiences/:expId/picture")
+router.route("/:username/experiences/:experienceId/picture")
 .put(imgExperience)
 
 router.route("/:experienceId/csv")
