@@ -77,6 +77,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
     try{
         const profile = await ProfileModel.findById(req.params.id)
+        .populate({path:"friendRequests",populate:[{path:"userSent",select:"name"},{path:"userReceived",select:"name"}]})
         res.send(profile)
     }catch (error){
         next(error)
@@ -181,7 +182,6 @@ router.route("/:username/experiences/:expId")
 
 router.route("/:username/experiences/:expId/picture")
 .put(imgExperience)
-
 
 
 export default router

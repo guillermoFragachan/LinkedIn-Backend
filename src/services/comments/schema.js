@@ -22,7 +22,7 @@ const { Schema, model} = mongoose
 const commentSchema = new Schema(
         {
             user: {type: Schema.Types.ObjectId, ref:"Profile"},
-            comment:{type:String, default:"admin"},
+            comment:{type:String},
             post:{
                 type: Schema.Types.ObjectId,
                 ref:"Post"
