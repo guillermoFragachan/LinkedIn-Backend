@@ -46,7 +46,8 @@ postRouter.get("/", async(req,res,next)=> {
     for(let i = 0; i < x.length; i++) {
       const friendsProfile = await ProfileSchema.findById(x[i])
       .populate({path: "likes.user", select:"_id, name"})
-      .populate({path: "user", select:" name, title, image"})
+      .populate({path:"user",populate:[{path:"name",select:"name,email,image"},{path:"title",select:"title"}]})
+
 
       
       console.log(friendsProfile)
@@ -63,7 +64,8 @@ postRouter.get("/", async(req,res,next)=> {
     .limit(mongoQuery.options.limit)
     .skip(mongoQuery.options.skip)
     .populate({path: "likes.user", select:"_id, name"})
-    .populate({path: "user", select:" name, title, image"})
+    .populate({path:"user",populate:[{path:"name",select:"name,email,image"},{path:"title",select:"title"}]})
+
     
     console.log(mongoQuery)
     
@@ -82,7 +84,11 @@ postRouter.get("/:postId", async(req, res, next)=> {
     
     const post = await PostModel.findById(id)
     .populate({path: "likes.user", select:"_id, name"})
-    .populate({path: "user", select:" name, title, image"})
+    // .populate({path: "user", select:" name, title, image"})
+    .populate({path:"user",populate:[{path:"name",select:"name,email,image"},{path:"title",select:"title"}]})
+
+    //        .populate({path:"friendRequests",populate:[{path:"userSent",select:"name,email,image"},{path:"userReceived",select:"name"}]})
+
     if (post) {
       res.send(post)
     }else{
